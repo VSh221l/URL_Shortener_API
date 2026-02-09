@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, Request, Depends
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 import sqlite3
 from database import get_connection
@@ -32,4 +33,13 @@ async def shorten_url(request: Request, data: UrlCreate):
 
 @router.get("/{code}")
 async def redirect_to_url(code: str):
-    pass
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT original_url FROM urls WHERE code = ?", (code,))
+        row = cursor.fetchone()
+        if row is None:
+            logger.error(f"Code URL not found: {code}")
+            raise HTTPException(status_code=404, detail="URL not found")
+        original_url = row[0]
+        logger.info(f"Redirecting from code {code} to URL: {original_url}")
+        return RedirectResponse(url=original_url)
