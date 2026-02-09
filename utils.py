@@ -1,6 +1,5 @@
 import secrets
 import string
-import re
 from urllib.parse import urlparse
 from logging_config import logger
 

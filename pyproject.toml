@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "url-shortener"
+version = "1.0.0"
+description = "A simple URL shortener API"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.100",
+    "uvicorn[standard]",
+    "httpx",
+    "pytest",
+    "pytest-asyncio",
+]
+
+[tool.setuptools.packages.find]
+include = ["*"]
+
+[project.scripts]
+start = "uvicorn main:app --reload --host 0.0.0.0 --port 8000"
+run-tests = "pytest tests/"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
